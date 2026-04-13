@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
+import logo from '../assets/logo.png'; // Make sure to place the logo here
 
 const Navbar = () => {
   const navItems = [
@@ -13,9 +14,7 @@ const Navbar = () => {
     <header className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          {/* We mimic the logo text since we don't have the exact image asset */}
-          <span className="logo-ikarus">Ikarus</span>
-          <span className="logo-sub">INFLAPARQUE ACUÁTICO</span>
+          <img src={logo} alt="Ikarus Logo" className="navbar-logo-img" />
         </div>
 
         <nav className="navbar-links">
