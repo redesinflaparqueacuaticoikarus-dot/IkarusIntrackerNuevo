@@ -69,3 +69,36 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+@media (max-width: 900px) {
+  .navbar-container {
+    padding: 12px 20px;
+  }
+  .navbar-links {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    height: auto;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav-item {
+    font-size: 0.75rem;
+  }
+
+  .navbar-actions {
+    display: none;
+  }
+}

@@ -24,6 +24,13 @@
   gap: 16px;
 }
 
+@media (max-width: 600px) {
+  .grid-form {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
 .span-full {
   grid-column: 1 / -1;
 }

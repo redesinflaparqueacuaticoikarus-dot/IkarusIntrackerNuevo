@@ -222,3 +222,28 @@ th {
 .w-full { width: 100%; }
 .text-center { text-align: center; }
 .mx-auto { margin-left: auto; margin-right: auto; }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 20px 16px;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+
+  .page-header.flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .page-header .btn-primary {
+    width: 100%;
+  }
+
+  .admin-card {
+    padding: 16px;
+  }
+}

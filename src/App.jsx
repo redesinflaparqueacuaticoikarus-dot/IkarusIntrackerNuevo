@@ -17,6 +17,9 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
+      <footer style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600 }}>
+        Powered by Harmony
+      </footer>
     </Router>
   );
 };
