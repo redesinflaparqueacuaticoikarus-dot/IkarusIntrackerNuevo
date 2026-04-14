@@ -1,83 +1,86 @@
-import localforage from 'localforage';
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from "./supabase";
 
-localforage.config({
-  name: 'IkarusDB',
-  storeName: 'bonos_taquilla',
-  description: 'Local database for Ikarus 2x1 Bonus System'
-});
-
-const STORE_KEY = 'ikarus_records';
+const TABLE_NAME = "bonos_taquilla";
 
 /**
- * Helper to fetch all records. Returns empty array if none.
+ * Fetch all records from Supabase
  */
 export const getAllRecords = async () => {
-  try {
-    const data = await localforage.getItem(STORE_KEY);
-    return data || [];
-  } catch (err) {
-    console.error('Error fetching records:', err);
+  const { data, error } = await supabase.from(TABLE_NAME).select('*');
+  if (error) {
+    console.error('Error fetching records:', error);
     return [];
   }
+  return data || [];
 };
 
 /**
- * Save all records array directly.
+ * Save all records array directly (Deprecated, kept for signature compatibility if needed)
  */
 export const saveAllRecords = async (records) => {
-  try {
-    await localforage.setItem(STORE_KEY, records);
-  } catch (err) {
-    console.error('Error saving records:', err);
-  }
+  console.warn("saveAllRecords is deprecated. Supabase handles updates directly.");
 };
 
 /**
- * Check if a specific CC already exists in the local database.
- * Returns the existing record or null.
+ * Check if a specific CC already exists in the database.
  */
 export const checkDuplicateCC = async (cc) => {
   if (!cc) return null;
-  const records = await getAllRecords();
-  return records.find(r => String(r.CC).trim() === String(cc).trim()) || null;
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('CC', String(cc).trim())
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error checking duplicate CC:', error);
+  }
+  return data || null;
 };
 
 /**
- * Add a single record. Automatically injects standard format and ID.
+ * Add a single record.
  */
 export const addRecord = async (record) => {
-  const records = await getAllRecords();
   const newRecord = {
     ...record,
-    id: uuidv4(),
     createdAt: new Date().toISOString()
   };
-  records.push(newRecord);
-  await saveAllRecords(records);
-  return newRecord;
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .insert([newRecord])
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error adding record:", error);
+    throw error;
+  }
+  return data;
 };
 
 /**
- * Import a batch of records (e.g., from Excel).
- * We inject IDs for all them. We don't block duplicates here, 
- * they will be visible in the Duplicates scanner.
+ * Import a batch of records (e.g., from Excel) using bulk inserts.
  */
 export const importMultipleRecords = async (newRecords) => {
-  const records = await getAllRecords();
-  const recordsWithId = newRecords.map(r => ({
+  const recordsToInsert = newRecords.map(r => ({
     ...r,
-    id: uuidv4(),
     createdAt: new Date().toISOString()
   }));
-  const updatedRecords = [...records, ...recordsWithId];
-  await saveAllRecords(updatedRecords);
-  return recordsWithId.length;
+
+  const { error } = await supabase
+    .from(TABLE_NAME)
+    .insert(recordsToInsert);
+
+  if (error) {
+    console.error("Error importing records:", error);
+    throw error;
+  }
+  return recordsToInsert.length;
 };
 
 /**
  * Scan the database for any IDs that share the same CC.
- * Returns an array of groups, e.g. [ [record1, record2], [record3, record4] ]
  */
 export const getDuplicatesGroups = async () => {
   const records = await getAllRecords();
@@ -85,7 +88,7 @@ export const getDuplicatesGroups = async () => {
 
   records.forEach(r => {
     const cc = String(r.CC || '').trim();
-    if (!cc) return; // Skip empty CCs for this logic
+    if (!cc) return;
 
     if (!groupsByCC[cc]) {
       groupsByCC[cc] = [];
@@ -93,23 +96,28 @@ export const getDuplicatesGroups = async () => {
     groupsByCC[cc].push(r);
   });
 
-  // Filter only groups with more than 1 entry
   const duplicates = Object.values(groupsByCC).filter(group => group.length > 1);
   return duplicates;
 };
 
 /**
- * Delete a specific record by its UUID.
+ * Delete a specific record by its primary key id.
  */
 export const deleteRecord = async (id) => {
-  const records = await getAllRecords();
-  const updatedRecords = records.filter(r => r.id !== id);
-  await saveAllRecords(updatedRecords);
+  const { error } = await supabase
+    .from(TABLE_NAME)
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error("Error deleting record:", error);
+    throw error;
+  }
 };
 
 /**
  * Clear all DB (useful for debugging, normally not exposed).
  */
 export const clearDb = async () => {
-  await localforage.removeItem(STORE_KEY);
+  console.warn("clearDb called! Not implemented for remote Supabase to prevent accidental data wipe.");
 };

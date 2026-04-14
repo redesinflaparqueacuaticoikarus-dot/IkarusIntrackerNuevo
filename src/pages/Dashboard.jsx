@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { getAllRecords } from '../services/db';
 import { format, isToday } from 'date-fns';
-import { Users, Calendar, Award } from 'lucide-react';
+import { Users, Calendar, Award, Search } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
     total: 0,
     today: 0,
-    recent: []
+    allRecords: []
   });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     loadStats();
@@ -34,9 +35,19 @@ const Dashboard = () => {
     setStats({
       total: records.length,
       today: todayCount,
-      recent: sorted.slice(0, 5)
+      allRecords: sorted
     });
   };
+
+  const filteredRecords = useMemo(() => {
+    if (!searchTerm) return stats.allRecords.slice(0, 10);
+    const lower = searchTerm.toLowerCase();
+    return stats.allRecords.filter(r => 
+      (r.NOMBRE && String(r.NOMBRE).toLowerCase().includes(lower)) ||
+      (r.CC && String(r.CC).includes(lower)) ||
+      (r.USUARIO && String(r.USUARIO).toLowerCase().includes(lower))
+    );
+  }, [stats.allRecords, searchTerm]);
 
   return (
     <div className="page-container dashboard">
@@ -72,17 +83,31 @@ const Dashboard = () => {
           </div>
           <div className="stat-info">
             <h3>Últimos Canjes</h3>
-            <p className="stat-value">{stats.recent.length ? 'Activo' : 'N/A'}</p>
+            <p className="stat-value">{stats.allRecords.length ? 'Activo' : 'N/A'}</p>
           </div>
         </div>
       </div>
 
       <div className="mt-6 admin-card p-6">
-        <h2 className="mb-4 text-xl text-blue">Últimas 5 Entradas</h2>
-        {stats.recent.length === 0 ? (
-          <p className="text-muted">No hay registros aún.</p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '16px' }}>
+          <h2 className="text-xl text-blue m-0">{searchTerm ? 'Resultados de Búsqueda' : 'Últimas 10 Entradas'}</h2>
+          
+          <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+            <input 
+              type="text" 
+              placeholder="Buscar por Nombre, CC o Usuario..." 
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{ paddingLeft: '38px', width: '100%' }}
+            />
+          </div>
+        </div>
+
+        {filteredRecords.length === 0 ? (
+          <p className="text-muted">No hay registros que coincidan con la búsqueda.</p>
         ) : (
-          <div className="table-container">
+          <div className="table-container" style={{ overflowX: 'auto' }}>
             <table>
               <thead>
                 <tr>
@@ -93,12 +118,12 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {stats.recent.map((record, i) => (
+                {filteredRecords.map((record, i) => (
                   <tr key={record.id || i}>
                     <td>{record.FECHA}</td>
                     <td>{record.NOMBRE}</td>
                     <td>{record.CC}</td>
-                    <td style={{ fontWeight: 600, color: 'var(--color-ike-magenta)' }}>
+                    <td style={{ fontWeight: 600, color: 'var(--color-brand-pink)' }}>
                       @{record.USUARIO?.replace('@', '')}
                     </td>
                   </tr>
