@@ -148,9 +148,14 @@ const Scanner = () => {
         </div>
         <div style={{ flex: 1, position: 'relative' }}>
           <QrScanner 
-            onDecode={(result) => handleCode(result)} 
+            onScan={(result) => {
+              if (result && result.length > 0 && result[0].rawValue) {
+                handleCode(result[0].rawValue);
+              }
+            }} 
             onError={(error) => console.log(error?.message)}
             components={{ tracker: true, audio: false }}
+            constraints={{ facingMode: 'environment' }}
           />
         </div>
         <div style={{ padding: '20px', background: '#222', color: 'white', textAlign: 'center' }}>

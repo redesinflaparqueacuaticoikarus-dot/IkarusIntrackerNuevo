@@ -85,13 +85,14 @@ const Catalogo = () => {
               Paquetes
             </button>
           </div>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', background: 'var(--surface-glass)', padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--surface-glass-border)', marginLeft: 'auto' }}>
           <input 
             type="checkbox" 
             checked={mostrarInactivos} 
             onChange={(e) => setMostrarInactivos(e.target.checked)} 
+            style={{ width: '18px', height: '18px', accentColor: 'var(--color-brand-blue)', cursor: 'pointer' }}
           />
-          Mostrar Inactivos
+          <span style={{ fontSize: '0.85em', fontWeight: 'bold', color: 'var(--color-brand-blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mostrar Inactivos</span>
         </label>
       </div>
 
