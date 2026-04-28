@@ -4,6 +4,11 @@ import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Registration from './pages/Registration';
 import Duplicates from './pages/Duplicates';
+import Catalogo from './pages/Catalogo';
+import Ordenes from './pages/Ordenes';
+import OrdenNueva from './pages/OrdenNueva';
+import OrdenDetalle from './pages/OrdenDetalle';
+import Scanner from './pages/Scanner';
 
 const App = () => {
   return (
@@ -14,6 +19,13 @@ const App = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/registro" element={<Registration />} />
           <Route path="/duplicados" element={<Duplicates />} />
+          
+          <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/ordenes" element={<Ordenes />} />
+          <Route path="/ordenes/nueva" element={<OrdenNueva />} />
+          <Route path="/ordenes/:id" element={<OrdenDetalle />} />
+          <Route path="/scanner" element={<Scanner />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>

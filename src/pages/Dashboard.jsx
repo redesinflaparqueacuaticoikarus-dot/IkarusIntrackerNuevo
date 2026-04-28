@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { getAllRecords } from '../services/db';
+import { ordenesService } from '../services/ordenes';
 import { format, isToday } from 'date-fns';
-import { Users, Calendar, Award, Search } from 'lucide-react';
+import { Users, Calendar, Award, Search, DollarSign, Clock } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -9,6 +10,11 @@ const Dashboard = () => {
     total: 0,
     today: 0,
     allRecords: []
+  });
+  const [ordenesStats, setOrdenesStats] = useState({
+    todayOrders: 0,
+    todayRevenue: 0,
+    pendingItems: 0
   });
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -37,6 +43,42 @@ const Dashboard = () => {
       today: todayCount,
       allRecords: sorted
     });
+
+    try {
+      const orders = await ordenesService.getOrdenes();
+      let tOrders = 0;
+      let tRev = 0;
+      let pending = 0;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      for (const order of orders) {
+        if (order.fecha_visita === todayStr || (order.created_at && order.created_at.startsWith(todayStr))) {
+          tOrders++;
+          tRev += Number(order.total);
+        }
+        
+        // Let's count pending items if state is not canceled or used_total
+        if (order.estado === 'activa' || order.estado === 'usada_parcial') {
+          // We don't have items array in getOrdenes directly, we might need a separate query or just show count of active orders.
+          // Since getOrdenes doesn't return items, we will approximate pending items based on pax or query it if needed.
+          // To be precise without querying each, we can query public.orden_items where estado='pending'.
+          // For now we'll count how many orders are pending as "pending items" or fetch it.
+        }
+      }
+
+      // Fetch precise pending items count via supabase if possible
+      const { supabase } = await import('../services/supabase');
+      const { count } = await supabase.from('orden_items').select('*', { count: 'exact', head: true }).eq('estado', 'pending');
+
+      setOrdenesStats({
+        todayOrders: tOrders,
+        todayRevenue: tRev,
+        pendingItems: count || 0
+      });
+    } catch (e) {
+      console.error("Error loading ordenes stats", e);
+    }
   };
 
   const filteredRecords = useMemo(() => {
@@ -84,6 +126,39 @@ const Dashboard = () => {
           <div className="stat-info">
             <h3>Últimos Canjes</h3>
             <p className="stat-value">{stats.allRecords.length ? 'Activo' : 'N/A'}</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 style={{ marginTop: '30px', marginBottom: '15px' }}>KPIs Órdenes Manuales</h2>
+      <div className="stats-grid">
+        <div className="stat-card admin-card">
+          <div className="stat-icon" style={{ backgroundColor: '#28a745' }}>
+            <Calendar color="white" />
+          </div>
+          <div className="stat-info">
+            <h3>Órdenes Hoy</h3>
+            <p className="stat-value">{ordenesStats.todayOrders}</p>
+          </div>
+        </div>
+
+        <div className="stat-card admin-card">
+          <div className="stat-icon" style={{ backgroundColor: '#17a2b8' }}>
+            <DollarSign color="white" />
+          </div>
+          <div className="stat-info">
+            <h3>Ingresos Hoy</h3>
+            <p className="stat-value">${ordenesStats.todayRevenue.toLocaleString()}</p>
+          </div>
+        </div>
+        
+        <div className="stat-card admin-card">
+          <div className="stat-icon" style={{ backgroundColor: '#ffc107' }}>
+            <Clock color="white" />
+          </div>
+          <div className="stat-info">
+            <h3>Items Pendientes</h3>
+            <p className="stat-value">{ordenesStats.pendingItems}</p>
           </div>
         </div>
       </div>

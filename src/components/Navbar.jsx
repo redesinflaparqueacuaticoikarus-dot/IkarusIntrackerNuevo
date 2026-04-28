@@ -8,6 +8,9 @@ const Navbar = () => {
     { to: '/', label: 'INICIO' },
     { to: '/registro', label: 'AGREGAR / IMPORTAR' },
     { to: '/duplicados', label: 'DUPLICADOS' },
+    { to: '/catalogo', label: 'CATÁLOGO' },
+    { to: '/ordenes', label: 'ÓRDENES' },
+    { to: '/scanner', label: 'SCANNER' },
   ];
 
   return (
