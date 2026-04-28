@@ -30,45 +30,49 @@ const Ordenes = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>Órdenes Manuales</h2>
-        <Link to="/ordenes/nueva" style={{ padding: '10px 20px', background: 'var(--primary-color, #007bff)', color: 'white', textDecoration: 'none', borderRadius: '4px', fontWeight: 'bold' }}>
+    <div className="page-container">
+      <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 className="page-title">Órdenes Manuales</h1>
+        </div>
+        <Link to="/ordenes/nueva" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block' }}>
           + Crear Orden
         </Link>
-      </div>
+      </header>
 
-      {loading ? (
-        <p>Cargando órdenes...</p>
-      ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+      <div className="admin-card p-6">
+        {loading ? (
+          <p style={{ color: 'var(--text-muted)' }}>Cargando órdenes...</p>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
           <thead>
-            <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Código</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Cliente</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Fecha Visita</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Pax</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Total</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Estado</th>
-              <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Acciones</th>
+            <tr style={{ textAlign: 'left', color: 'var(--color-brand-teal)' }}>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Código</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Cliente</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Fecha Visita</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Pax</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Total</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Estado</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {ordenes.map(o => (
-              <tr key={o.id}>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd', fontWeight: 'bold' }}>{o.codigo}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                  {o.cliente_nombre}<br/>
-                  <small style={{ color: '#666' }}>{o.cliente_email}</small>
+              <tr key={o.id} style={{ transition: 'background 0.2s', ':hover': { background: 'rgba(0,0,0,0.02)' } }}>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)', fontWeight: 'bold', color: 'var(--color-brand-blue)' }}>{o.codigo}</td>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                  <div style={{ fontWeight: '500' }}>{o.cliente_nombre}</div>
+                  <div style={{ fontSize: '0.85em', color: 'var(--text-muted)' }}>{o.cliente_email}</div>
                 </td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>{o.fecha_visita}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>{o.cantidad_personas}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>${Number(o.total).toLocaleString()}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>{o.fecha_visita}</td>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>{o.cantidad_personas}</td>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)', fontWeight: '500' }}>${Number(o.total).toLocaleString()}</td>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
                   <span style={{ 
-                    padding: '4px 8px', 
+                    padding: '4px 10px', 
                     borderRadius: '12px', 
-                    fontSize: '0.85em', 
+                    fontSize: '0.80em', 
+                    fontWeight: 'bold',
                     background: estadoColors[o.estado] || '#ccc',
                     color: 'white',
                     textTransform: 'uppercase'
@@ -76,8 +80,8 @@ const Ordenes = () => {
                     {o.estado.replace('_', ' ')}
                   </span>
                 </td>
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                  <Link to={`/ordenes/${o.id}`} style={{ color: 'var(--primary-color, #007bff)', textDecoration: 'none', fontWeight: 'bold' }}>Ver Detalle</Link>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                  <Link to={`/ordenes/${o.id}`} style={{ color: 'var(--color-brand-blue)', textDecoration: 'none', fontWeight: 'bold' }}>Ver Detalle</Link>
                 </td>
               </tr>
             ))}
@@ -91,6 +95,7 @@ const Ordenes = () => {
           </tbody>
         </table>
       )}
+      </div>
     </div>
   );
 };

@@ -54,32 +54,37 @@ const Catalogo = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>Catálogo de Productos</h2>
+    <div className="page-container">
+      <header className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 className="page-title">Catálogo de Productos</h1>
+        </div>
         <button 
           onClick={() => { setEditingProduct(null); setIsModalOpen(true); }}
-          style={{ padding: '10px 20px', background: 'var(--primary-color, #007bff)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          className="btn-primary"
         >
           + Nuevo {activeTab === 'consumibles' ? 'Consumible' : 'Paquete'}
         </button>
-      </div>
+      </header>
 
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            onClick={() => setActiveTab('consumibles')}
-            style={{ padding: '8px 16px', border: '1px solid #ccc', background: activeTab === 'consumibles' ? '#eee' : 'white', cursor: 'pointer' }}
-          >
-            Consumibles
-          </button>
-          <button 
-            onClick={() => setActiveTab('paquetes')}
-            style={{ padding: '8px 16px', border: '1px solid #ccc', background: activeTab === 'paquetes' ? '#eee' : 'white', cursor: 'pointer' }}
-          >
-            Paquetes
-          </button>
-        </div>
+      <div className="admin-card p-6">
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '20px', alignItems: 'center', borderBottom: '2px solid var(--surface-glass-border)', paddingBottom: '15px' }}>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={() => setActiveTab('consumibles')}
+              className={activeTab === 'consumibles' ? 'btn-primary' : 'btn-secondary'}
+              style={{ padding: '8px 16px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Consumibles
+            </button>
+            <button 
+              onClick={() => setActiveTab('paquetes')}
+              className={activeTab === 'paquetes' ? 'btn-primary' : 'btn-secondary'}
+              style={{ padding: '8px 16px', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Paquetes
+            </button>
+          </div>
         <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <input 
             type="checkbox" 
@@ -90,64 +95,68 @@ const Catalogo = () => {
         </label>
       </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <thead>
-          <tr style={{ background: '#f5f5f5', textAlign: 'left' }}>
-            <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Nombre</th>
-            <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Precio</th>
-            {activeTab === 'consumibles' && <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Lugar Validación</th>}
-            {activeTab === 'consumibles' && <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Req. Proteína</th>}
-            <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Estado</th>
-            <th style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>Acciones</th>
-          </tr>
-        </thead>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+          <thead>
+            <tr style={{ textAlign: 'left', color: 'var(--color-brand-teal)' }}>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Nombre</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Precio</th>
+              {activeTab === 'consumibles' && <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Lugar Validación</th>}
+              {activeTab === 'consumibles' && <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Req. Proteína</th>}
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Estado</th>
+              <th style={{ padding: '15px 12px', borderBottom: '2px solid var(--surface-glass-border)', fontWeight: 'bold' }}>Acciones</th>
+            </tr>
+          </thead>
         <tbody>
-          {productos.map(p => (
-            <tr key={p.id} style={{ opacity: p.activo ? 1 : 0.5 }}>
-              <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                <strong>{p.nombre}</strong>
-                <div style={{ fontSize: '0.8em', color: '#666' }}>{p.descripcion}</div>
-              </td>
-              <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                ${Number(p.precio).toLocaleString()}
-              </td>
-              {activeTab === 'consumibles' && (
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd', textTransform: 'capitalize' }}>
-                  {p.lugar_validacion}
+            {productos.map(p => (
+              <tr key={p.id} style={{ opacity: p.activo ? 1 : 0.5, transition: 'background 0.2s', ':hover': { background: 'rgba(0,0,0,0.02)' } }}>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                  <strong style={{ color: 'var(--color-brand-blue)' }}>{p.nombre}</strong>
+                  <div style={{ fontSize: '0.85em', color: 'var(--text-muted)', marginTop: '4px' }}>{p.descripcion}</div>
                 </td>
-              )}
-              {activeTab === 'consumibles' && (
-                <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                  {p.requiere_proteina ? 'Sí' : 'No'}
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)', fontWeight: '500' }}>
+                  ${Number(p.precio).toLocaleString()}
                 </td>
-              )}
-              <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                {p.activo ? 'Activo' : 'Inactivo'}
-              </td>
-              <td style={{ padding: '12px', borderBottom: '1px solid #ddd' }}>
-                <button 
-                  onClick={() => { setEditingProduct(p); setIsModalOpen(true); }}
-                  style={{ marginRight: '10px', cursor: 'pointer' }}
-                >
-                  Editar
-                </button>
-                {p.activo ? (
-                  <button onClick={() => handleDelete(p.id)} style={{ color: 'red', cursor: 'pointer' }}>Eliminar</button>
-                ) : (
-                  <button onClick={() => handleRestore(p.id)} style={{ color: 'green', cursor: 'pointer' }}>Restaurar</button>
+                {activeTab === 'consumibles' && (
+                  <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)', textTransform: 'capitalize' }}>
+                    {p.lugar_validacion}
+                  </td>
                 )}
-              </td>
-            </tr>
-          ))}
-          {productos.length === 0 && (
-            <tr>
-              <td colSpan="6" style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                No hay productos para mostrar.
-              </td>
-            </tr>
-          )}
+                {activeTab === 'consumibles' && (
+                  <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                    {p.requiere_proteina ? <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '12px', fontSize: '0.85em', fontWeight: 'bold' }}>Sí</span> : 'No'}
+                  </td>
+                )}
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                  {p.activo ? 
+                    <span style={{ color: '#047857', fontWeight: 'bold' }}>Activo</span> : 
+                    <span style={{ color: '#b91c1c', fontWeight: 'bold' }}>Inactivo</span>
+                  }
+                </td>
+                <td style={{ padding: '15px 12px', borderBottom: '1px solid var(--surface-glass-border)' }}>
+                  <button 
+                    onClick={() => { setEditingProduct(p); setIsModalOpen(true); }}
+                    style={{ marginRight: '10px', cursor: 'pointer', background: 'none', border: 'none', color: 'var(--color-brand-light-blue)', fontWeight: 'bold' }}
+                  >
+                    Editar
+                  </button>
+                  {p.activo ? (
+                    <button onClick={() => handleDelete(p.id)} style={{ color: 'red', cursor: 'pointer', background: 'none', border: 'none', fontWeight: 'bold' }}>Eliminar</button>
+                  ) : (
+                    <button onClick={() => handleRestore(p.id)} style={{ color: 'green', cursor: 'pointer', background: 'none', border: 'none', fontWeight: 'bold' }}>Restaurar</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {productos.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  No hay productos para mostrar en esta categoría.
+                </td>
+              </tr>
+            )}
         </tbody>
       </table>
+      </div>
 
       {isModalOpen && (
         <ProductoForm 
